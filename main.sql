@@ -5,10 +5,13 @@ USE sakila;
 -- List the number of films per category.
 
 SELECT 
-	special_features
-    ,count(*) as num_of_films 
-from film
-group by special_features;
+	c.name
+    ,count(fc.film_id) as num_of_films
+from film_category fc
+JOIN category c
+	using (category_id)
+GROUP BY c.name
+ORDER BY count(fc.film_id) DESC;
 
 -- Retrieve the store ID, city, and country for each store.
 
@@ -41,20 +44,30 @@ group by s.store_id;
 
 -- Determine the average running time of films for each category.
 
-select 
-	special_features, round(avg(length)) as avg_run_time
-from film
-group by special_features;
-
+SELECT 
+	c.name
+    ,round(avg(f.length)) as avg_run_time
+from film_category fc
+JOIN category c
+	using (category_id)
+JOIN film f
+	on f.film_id = fc.film_id
+GROUP BY c.name
+ORDER BY c.name;
 
 -- Bonus:
 
 -- Identify the film categories with the longest average running time.
 
-select 
-	special_features, round(avg(length)) as avg_run_time
-from film
-group by special_features
+SELECT 
+	c.name
+    ,round(avg(f.length)) as avg_run_time
+from film_category fc
+JOIN category c
+	using (category_id)
+JOIN film f
+	on f.film_id = fc.film_id
+GROUP BY c.name
 order by avg_run_time desc
 limit 5;
 
